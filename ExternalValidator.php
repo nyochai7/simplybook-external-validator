@@ -31,62 +31,16 @@ class ExternalValidator {
             $this->_log($bookingData);
 
             //It is an example of service validation. Similarly, you can check the provider, client or number of bookings
-            if (!isset($bookingData['service_id']) || $bookingData['service_id'] != 9) {
-                $this->_error(self::SERVICE_ERROR, 'service_id');
+            if (!isset($bookingData['client_id'])) {
+                $this->_error(self::SERVICE_ERROR, 'client_id');
                 return false;
             }
 
-            //It is an example of Intake Form validation.
-            if (!isset($bookingData['additional_fields'])) {
-                $this->_error(self::INTAKE_FORM_UNKNOWN);
-                return false;
-            }
 
-            //Please select the 'Check number' Intake field. You can also find the Intake form by its id (if you know the id in advance)
-            $checkNumberField = $this->_findField('checkNumber', $bookingData['additional_fields'], $this->_fieldsNameMap);
-
-            //It is the example of 'Check number' validation.
-            if (!$checkNumberField) { //field with the name 'Check number' is missing
-                $this->_error(self::INTAKE_FORM_UNKNOWN_CHECK_NUMBER );
-                return false;
-            }else if ($checkNumberField['value'] != 112233445566) { //check the field value
-                $this->_error(self::INTAKE_FORM_INCORRECT_CHECK_NUMBER, null, $checkNumberField['id'] );
-                return false;
-            }
-
-            //Please select the 'Date of birth' Intake form. The same way, you can find Intake field by its id (if you know the id in advance)
-            $dateOfBirthField = $this->_findField('dateOfBirth', $bookingData['additional_fields'], $this->_fieldsNameMap);
-
-            //It is the example of 'Date of birth' validation.
-            if (!$dateOfBirthField) { //field with name 'Date of birth' is missing
-                $this->_error(self::INTAKE_FORM_UNKNOWN_CHECK_DOB );
-                return false;
-            }else if ( !$this->_isBirthdayValid($dateOfBirthField['value']) ) { //check if 'Date of birth' is valid
-                $this->_error(self::INTAKE_FORM_INCORRECT_CHECK_DOB, null, $checkNumberField['id'] );
-                return false;
-            }
-
-            //It is the example of changing the Intake Form value.
-            // This value will be saved on the SimplyBook.me side.
-            // Please note that only Intake Form can be changed (provider or service cannot be changed)
-            $result = array(
-                'checkString' => "replaced text", //Change the value of the 'Some string' field. The value will be saved on the SimplyBook.me side, as if entered by the client
-            );
-
-            $this->_log($result);
-            $intakeFieldsResult = $this->_createFieldResult($result, $bookingData['additional_fields'], $this->_fieldsNameMap);
-            $this->_log($intakeFieldsResult);
 
             $timeEnd = microtime(true);
             $executionTime = $timeEnd - $timeStart;
 
-            $this->_log('Total Execution Time: '.$executionTime.' sec');
-
-            if($intakeFieldsResult){
-                return array(
-                    'additional_fields' => $intakeFieldsResult,
-                );
-            }
             return array();
         } catch(ExternalValidatorException $e){ //validator Error
             return $this->_sendError($e);
@@ -99,39 +53,7 @@ class ExternalValidator {
         }
     }
 
-    protected function _isBirthdayValid($date){
-        if(!$date || empty($date)){
-            return false;
-        }
-        $tDate = strtotime($date);
-        if($tDate === false){
-            return false;
-        }
 
-        $age = date('Y') - date('Y', $tDate);
-        if($age > 140){
-            return false;
-        }
-        if (date('Ymd') < date('Ymd', $tDate)) {
-            return false;
-        }
-        return true;
-    }
-
-    protected function _findField($fieldKey, $addFields, $map){
-        $mapType = 'name';
-
-        if(isset($map[$fieldKey])) {
-            $fieldName = $map[$fieldKey];
-
-            foreach ($addFields as $additionalField) {
-                if (strtolower(trim($additionalField[$mapType])) == strtolower(trim($fieldName))) {
-                    return $additionalField;
-                }
-            }
-        }
-        return null;
-    }
 
     /**
      * Generation error for output on the Simplybook.me booking page
@@ -169,34 +91,6 @@ class ExternalValidator {
         }
     }
 
-
-    /**
-     * @param array $resultArr
-     * @param array $addFields
-     * @param array $map
-     * @param string{"name", "title"} $mapType
-     * @return array
-     */
-    protected function _createFieldResult($resultArr, $addFields, $map){
-        $result = array();
-
-        foreach ($resultArr as $key => $value){
-            if(!$value){
-                continue;
-            }
-            if(is_array($value)){
-                $value = implode('; ', $value);
-            }
-            $field = $this->_findField($key, $addFields, $map);
-
-            if($field){
-                $field['value'] = $value;
-                $result[] = $field;
-            }
-        }
-        return $result;
-    }
-
     /**
      * @param int $code
      * @param null|array $fieldId
@@ -211,6 +105,7 @@ class ExternalValidator {
         }
         $this->_throwError($message, $code, $fieldId, $intakeFieldId, $data);
     }
+
     /**
      * @param string $message
      * @param int $code
