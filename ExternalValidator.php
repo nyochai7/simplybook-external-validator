@@ -30,7 +30,7 @@ class ExternalValidator {
         try{
             $timeStart = microtime(true);
             $this->_log($bookingData);
-
+            $this->_log('here1');
             //It is an example of service validation. Similarly, you can check the provider, client or number of bookings
             //if (!isset($bookingData['client_id'])) {
             //    $this->_error(self::SERVICE_ERROR, 'client_id');
@@ -38,6 +38,7 @@ class ExternalValidator {
             //}
 
             if (!isset($bookingData['provider_id']) || ($bookingData['provider_id'] == 1 && !isset($bookingData['client_email']))) {
+                this->_log('here2');
                 $this->_error(self::SERVICE_ERROR, 'service_id');
                 return false;
             }
