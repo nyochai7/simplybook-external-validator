@@ -18,7 +18,7 @@ class ExternalValidator {
         self::INTAKE_FORM_INCORRECT_CHECK_NUMBER => '"Check number" field is incorrect.',
         self::INTAKE_FORM_UNKNOWN_CHECK_DOB => '"Date of birth" field is missing.',
         self::INTAKE_FORM_INCORRECT_CHECK_DOB => 'Incorrect date of birth',
-        self::EMAIL_ERROR => 'Please enter an email address'
+        self::EMAIL_ERROR => 'Email address is missing.'
     );
 
     protected $_fieldsNameMap = array(
@@ -31,7 +31,7 @@ class ExternalValidator {
         try{
             $timeStart = microtime(true);
             $this->_log($bookingData);
-            echo $bookingData;
+            // echo $bookingData;
             echo 'here1';
             //It is an example of service validation. Similarly, you can check the provider, client or number of bookings
             //if (!isset($bookingData['client_id'])) {
@@ -42,8 +42,8 @@ class ExternalValidator {
             // 
             if (isset($bookingData['provider_id'])){
                 if ($bookingData['provider_id'] == 1 && (!isset($bookingData['client_email']) || $bookingData['client_email'] == "")) {
-                    this->_log('here2');
-                    $this->_error(self::SERVICE_ERROR, 'service_id');
+                    // this->_log('here2');
+                    $this->_error(self::EMAIL_ERROR, 'client_email');
                     return false;
                 }    
             } 
@@ -53,8 +53,10 @@ class ExternalValidator {
 
             return array();
         } catch(ExternalValidatorException $e){ //validator Error
+            echo 'here3';
             return $this->_sendError($e);
         } catch (Exception $e){ // other error
+            echo 'here4';
             $result = array(
                 'errors' => array($e->getMessage())
             );
