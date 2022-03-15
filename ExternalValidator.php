@@ -32,12 +32,12 @@ class ExternalValidator {
             $this->_log($bookingData);
 
             //It is an example of service validation. Similarly, you can check the provider, client or number of bookings
-            if (!isset($bookingData['client_id'])) {
-                $this->_error(self::SERVICE_ERROR, 'client_id');
-                return false;
-            }
+            //if (!isset($bookingData['client_id'])) {
+            //    $this->_error(self::SERVICE_ERROR, 'client_id');
+            //    return false;
+            //}
 
-            if (!isset($bookingData['provider_id']) || ($bookingData['provider_id'] == 1 && !isset($bookingData['email']))) {
+            if (!isset($bookingData['provider_id']) || ($bookingData['provider_id'] == 1 && !isset($bookingData['client_email']))) {
                 $this->_error(self::SERVICE_ERROR, 'service_id');
                 return false;
             }
