@@ -9,6 +9,7 @@ class ExternalValidator {
     const INTAKE_FORM_INCORRECT_CHECK_NUMBER = 4;
     const INTAKE_FORM_UNKNOWN_CHECK_DOB = 5;
     const INTAKE_FORM_INCORRECT_CHECK_DOB = 6;
+    const EMAIL_ERROR = 7;
 
     protected $_errors = array(
         self::SERVICE_ERROR => 'Invalid service is selected. Please select another service to continue booking.',
