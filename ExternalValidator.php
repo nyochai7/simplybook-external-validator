@@ -17,6 +17,7 @@ class ExternalValidator {
         self::INTAKE_FORM_INCORRECT_CHECK_NUMBER => '"Check number" field is incorrect.',
         self::INTAKE_FORM_UNKNOWN_CHECK_DOB => '"Date of birth" field is missing.',
         self::INTAKE_FORM_INCORRECT_CHECK_DOB => 'Incorrect date of birth',
+        self::EMAIL_ERROR => 'Please enter an email address'
     );
 
     protected $_fieldsNameMap = array(
@@ -36,7 +37,10 @@ class ExternalValidator {
                 return false;
             }
 
-
+            if (!isset($bookingData['provider_id']) || ($bookingData['provider_id'] == 1 && !isset($bookingData['email']))) {
+                $this->_error(self::SERVICE_ERROR, 'service_id');
+                return false;
+            }
 
             $timeEnd = microtime(true);
             $executionTime = $timeEnd - $timeStart;
