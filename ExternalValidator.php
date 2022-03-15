@@ -38,7 +38,8 @@ class ExternalValidator {
             //    return false;
             //}
 
-            if (!isset($bookingData['provider_id']) || ($bookingData['provider_id'] == 1 && !isset($bookingData['client_email']))) {
+            // || ($bookingData['provider_id'] == 1 && !isset($bookingData['client_email']))
+            if (!isset($bookingData['provider_id']) ) {
                 this->_log('here2');
                 $this->_error(self::SERVICE_ERROR, 'service_id');
                 return false;
