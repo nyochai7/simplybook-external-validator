@@ -41,5 +41,5 @@ if(!$incomingData){
 } else {
     $validator = new ExternalValidator();
     // $result = $validator->validate($incomingData);
-    echo json_encode(array());
+    echo json_encode (new stdClass);
 }
